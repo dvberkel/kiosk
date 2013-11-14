@@ -1,0 +1,25 @@
+.config {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    height: 30px;
+    padding: 5px;
+}
+
+.port {
+    position: absolute;
+    top: 30px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+}
+
+input {
+    width: 300px;
+}
