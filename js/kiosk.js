@@ -6,8 +6,9 @@
 	}
     }
 
-    var Config = function(htmlElement) {
+    var Config = function(htmlElement, callback) {
 	this.htmlElement = htmlElement;
+	this.callback = callback;
 	this.create();
     }
     Config.prototype.create = function(){
@@ -19,7 +20,7 @@
 	    this.removeChild(child);
 	}.bind(this.htmlElement));
     }
-    Config.prototype.populate =  function(){
+    Config.prototype.populate = function(){
 	var container = this.container();
 	container.appendChild(this.input());
 	container.appendChild(this.button());
@@ -34,6 +35,7 @@
     Config.prototype.button = function(){
 	var button = document.createElement('button');
 	button.textContent = 'Load';
+	button.addEventListener('click', this.callback.bind(this.htmlElement));
 	return button;
     }
     Config.prototype.container = function(){
@@ -43,6 +45,9 @@
 
     var configs = document.getElementsByClassName('config');
     forEach(configs, function createConfig(htmlElement){
-	new Config(htmlElement);
+	new Config(htmlElement, function(){
+	    console.log(this);
+	    console.log('called');
+	});
     });
 })();
