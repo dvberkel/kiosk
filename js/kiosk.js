@@ -1,4 +1,4 @@
-(function(){
+var kiosk = (function(){
     function forEach(htmlCollection, callback) {
 	for (var index = 0, length = htmlCollection.length; index < length; index++) {
 	    var item = htmlCollection[index];
@@ -70,18 +70,35 @@
 	}
 	return this._iframe;
     }
+    Port.prototype.load = function(url){
+	var iframe = this.iframe();
+	iframe.setAttribute('src', url);
+    }
 
-    function createConfig(htmlElement){
+    var Kiosk = function(){
+	this.ports = [];
+    }
+    Kiosk.prototype.createPort = function(htmlElement){
+	var port = new Port(htmlElement);
+	this.ports.push(port);
+    }
+    Kiosk.prototype.createConfig = function(htmlElement){
+	var kiosk = this;
 	new Config(htmlElement, function(){
 	    var input = this.input();
-	    console.log(input.value);
+	    kiosk.load(input.value);
+	});
+    }
+    Kiosk.prototype.load = function(url){
+	this.ports.forEach(function(port){
+	    port.load(url);
 	});
     }
 
-    function createPort(htmlElement){
-	new Port(htmlElement);
-    }
+    var kiosk = new Kiosk();
 
-    forEach(document.getElementsByClassName('config'), createConfig);
-    forEach(document.getElementsByClassName('port'), createPort);
+    forEach(document.getElementsByClassName('config'), kiosk.createConfig.bind(kiosk));
+    forEach(document.getElementsByClassName('port'), kiosk.createPort.bind(kiosk));
+
+    return kiosk;
 })();
