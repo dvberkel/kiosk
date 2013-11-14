@@ -28,15 +28,19 @@
 	this.htmlElement.appendChild(container);
     }
     Config.prototype.input = function(){
-	var input = document.createElement('input');
-	input.setAttribute('type', 'test');
-	return input;
+	if (!this._input) {
+	    var input = this._input = document.createElement('input');
+	    input.setAttribute('type', 'test');
+	}
+	return this._input;
     }
     Config.prototype.button = function(){
-	var button = document.createElement('button');
-	button.textContent = 'Load';
-	button.addEventListener('click', this.callback.bind(this.htmlElement));
-	return button;
+	if (!this._button) {
+	    var button = this._button = document.createElement('button');
+	    button.textContent = 'Load';
+	    button.addEventListener('click', this.callback.bind(this));
+	}
+	return this._button;
     }
     Config.prototype.container = function(){
 	var container = document.createElement('div');
@@ -46,8 +50,8 @@
     var configs = document.getElementsByClassName('config');
     forEach(configs, function createConfig(htmlElement){
 	new Config(htmlElement, function(){
-	    console.log(this);
-	    console.log('called');
+	    var input = this.input();
+	    console.log(input.value);
 	});
     });
 })();
