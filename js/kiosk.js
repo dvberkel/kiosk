@@ -6,9 +6,11 @@ var kiosk = (function(){
 	}
     }
 
-    var Config = function(htmlElement, callback) {
+    var Config = function(htmlElement, loadCallback, pushCallback, loopCallback) {
 	this.htmlElement = htmlElement;
-	this.callback = callback;
+	this.loadCallback = loadCallback;
+	this.pushCallback = pushCallback;
+	this.loopCallback = loopCallback;
 	this.create();
     }
     Config.prototype.create = function(){
@@ -23,7 +25,9 @@ var kiosk = (function(){
     Config.prototype.populate = function(){
 	var container = this.container();
 	container.appendChild(this.input());
-	container.appendChild(this.button());
+	container.appendChild(this.loadButton());
+	container.appendChild(this.pushButton());
+	container.appendChild(this.loopButton());
 
 	this.htmlElement.appendChild(container);
     }
@@ -34,13 +38,29 @@ var kiosk = (function(){
 	}
 	return this._input;
     }
-    Config.prototype.button = function(){
-	if (!this._button) {
-	    var button = this._button = document.createElement('button');
+    Config.prototype.loadButton = function(){
+	if (!this._loadButton) {
+	    var button = this._loadButton = document.createElement('button');
 	    button.textContent = 'Load';
-	    button.addEventListener('click', this.callback.bind(this));
+	    button.addEventListener('click', this.loadCallback.bind(this));
 	}
-	return this._button;
+	return this._loadButton;
+    }
+    Config.prototype.pushButton = function(){
+	if (!this._pushButton) {
+	    var button = this._pushButton = document.createElement('button');
+	    button.textContent = 'Push';
+	    button.addEventListener('click', this.pushCallback.bind(this));
+	}
+	return this._pushButton;
+    }
+    Config.prototype.loopButton = function(){
+	if (!this._loopButton) {
+	    var button = this._loopButton = document.createElement('button');
+	    button.textContent = 'Loop';
+	    button.addEventListener('click', this.loopCallback.bind(this));
+	}
+	return this._loopButton;
     }
     Config.prototype.container = function(){
 	var container = document.createElement('div');
@@ -76,6 +96,7 @@ var kiosk = (function(){
     }
 
     var Kiosk = function(){
+	this.urls = [];
 	this.ports = [];
     }
     Kiosk.prototype.createPort = function(htmlElement){
@@ -84,15 +105,38 @@ var kiosk = (function(){
     }
     Kiosk.prototype.createConfig = function(htmlElement){
 	var kiosk = this;
+	var interval = undefined;
 	new Config(htmlElement, function(){
 	    var input = this.input();
 	    kiosk.load(input.value);
+	}, function(){
+	    var input = this.input();
+	    kiosk.push(input.value);
+	}, function(){
+	    if (!interval) {
+		interval = setInterval(kiosk.loadNextInloop.bind(kiosk), 5 * 1000);
+	    } else {
+		clearInterval(interval);
+		interval = undefined;
+	    }
 	});
     }
     Kiosk.prototype.load = function(url){
 	this.ports.forEach(function(port){
 	    port.load(url);
 	});
+    }
+    Kiosk.prototype.push = function(url){
+	this.urls.push(url);
+    }
+    Kiosk.prototype.loadNextInloop = function(){
+	if (!this.current) { this.current = 0; }
+	var n = this.urls.length;
+	if (n > 0 && this.current < n) {
+	    var url = this.urls[this.current];
+	    this.load(url);
+	}
+	this.current = (this.current+1) % n;
     }
 
     var kiosk = new Kiosk();
