@@ -6,11 +6,12 @@ var kiosk = (function(){
 	}
     }
 
-    var Config = function(htmlElement, loadCallback, pushCallback, loopCallback) {
+    doNothing = function(){ /* do nothing */ }
+    var Config = function(htmlElement, callbacks) {
 	this.htmlElement = htmlElement;
-	this.loadCallback = loadCallback;
-	this.pushCallback = pushCallback;
-	this.loopCallback = loopCallback;
+	this.loadCallback = callbacks.loadCallback || doNothing;
+	this.pushCallback = callbacks.pushCallback || doNothing;
+	this.loopCallback = callbacks.loopCallback || doNothing;
 	this.create();
     }
     Config.prototype.create = function(){
@@ -106,18 +107,22 @@ var kiosk = (function(){
     Kiosk.prototype.createConfig = function(htmlElement){
 	var kiosk = this;
 	var interval = undefined;
-	new Config(htmlElement, function(){
-	    var input = this.input();
-	    kiosk.load(input.value);
-	}, function(){
-	    var input = this.input();
-	    kiosk.push(input.value);
-	}, function(){
-	    if (!interval) {
-		interval = setInterval(kiosk.loadNextInloop.bind(kiosk), 5 * 1000);
-	    } else {
-		clearInterval(interval);
-		interval = undefined;
+	new Config(htmlElement, {
+	    loadCallback: function(){
+		var input = this.input();
+		kiosk.load(input.value);
+	    },
+	    pushCallback: function(){
+		var input = this.input();
+		kiosk.push(input.value);
+	    },
+	    loopCallback: function(){
+		if (!interval) {
+		    interval = setInterval(kiosk.loadNextInloop.bind(kiosk), 5 * 1000);
+		} else {
+		    clearInterval(interval);
+		    interval = undefined;
+		}
 	    }
 	});
     }
