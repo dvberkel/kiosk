@@ -47,6 +47,30 @@
 	return container;
     }
 
+    var Port = function(htmlElement) {
+	this.htmlElement = htmlElement;
+	this.create();
+    }
+    Port.prototype.create = function(){
+	this.clear()
+	this.populate();
+    }
+    Port.prototype.clear = function(){
+	forEach(this.htmlElement.children, function(child){
+	    this.removeChild(child);
+	}.bind(this.htmlElement));
+    }
+    Port.prototype.populate = function(){
+	var iframe = this.iframe();
+	this.htmlElement.appendChild(iframe);
+    }
+    Port.prototype.iframe = function(){
+	if (!this._iframe) {
+	    var iframe = this._iframe = document.createElement('iframe');
+	}
+	return this._iframe;
+    }
+
     var configs = document.getElementsByClassName('config');
     forEach(configs, function createConfig(htmlElement){
 	new Config(htmlElement, function(){
@@ -54,4 +78,9 @@
 	    console.log(input.value);
 	});
     });
+
+    var ports = document.getElementsByClassName('port');
+    forEach(ports, function createPort(htmlElement){
+	new Port(htmlElement);
+    })
 })();
