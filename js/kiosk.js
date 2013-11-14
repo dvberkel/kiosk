@@ -71,16 +71,17 @@
 	return this._iframe;
     }
 
-    var configs = document.getElementsByClassName('config');
-    forEach(configs, function createConfig(htmlElement){
+    function createConfig(htmlElement){
 	new Config(htmlElement, function(){
 	    var input = this.input();
 	    console.log(input.value);
 	});
-    });
+    }
 
-    var ports = document.getElementsByClassName('port');
-    forEach(ports, function createPort(htmlElement){
+    function createPort(htmlElement){
 	new Port(htmlElement);
-    })
+    }
+
+    forEach(document.getElementsByClassName('config'), createConfig);
+    forEach(document.getElementsByClassName('port'), createPort);
 })();
