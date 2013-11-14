@@ -29,6 +29,7 @@ var kiosk = (function(){
 	container.appendChild(this.loadButton());
 	container.appendChild(this.pushButton());
 	container.appendChild(this.loopButton());
+	container.appendChild(this.delay());
 
 	this.htmlElement.appendChild(container);
     }
@@ -36,6 +37,7 @@ var kiosk = (function(){
 	if (!this._input) {
 	    var input = this._input = document.createElement('input');
 	    input.setAttribute('type', 'test');
+	    input.setAttribute('class', 'url');
 	}
 	return this._input;
     }
@@ -62,6 +64,15 @@ var kiosk = (function(){
 	    button.addEventListener('click', this.loopCallback.bind(this));
 	}
 	return this._loopButton;
+    }
+    Config.prototype.delay = function(){
+	if (!this._delay) {
+	    var delay = this._delay = document.createElement('input');
+	    delay.setAttribute('type', 'test');
+	    delay.setAttribute('class', 'delay');
+	    delay.value = 10 * 1000;
+	}
+	return this._delay;
     }
     Config.prototype.container = function(){
 	var container = document.createElement('div');
@@ -118,7 +129,7 @@ var kiosk = (function(){
 	    },
 	    loopCallback: function(){
 		if (!interval) {
-		    interval = setInterval(kiosk.loadNextInloop.bind(kiosk), 5 * 1000);
+		    interval = setInterval(kiosk.loadNextInloop.bind(kiosk), this.delay().value);
 		} else {
 		    clearInterval(interval);
 		    interval = undefined;
