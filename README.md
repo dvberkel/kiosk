@@ -16,9 +16,7 @@ Webapp to rotate through a set of webpages.
 
 
 ## Do I need to host this myself?
-That's possible, but not necessary. You can use [htmlpreview.github.io][htmlpreview] to run it directly from Github. [Try it out!][onlinedemo]
+That's possible, but not necessary. You can use the corresponding [GitHub page][onlinedemo] to run it directly from Github. [Try it out!][onlinedemo]
 
 
-[onlinedemo]: http://htmlpreview.github.io/?https://github.com/dvberkel/kiosk/blob/master/index.html
-
-[htmlpreview]: htmlpreview.github.io
+[onlinedemo]: http://dvberkel.github.com/kiosk
